@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style> 
+   canvas {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    display: block;
+   
+}
+
+  </style>
+</head>
+
+
+<body>
+  
+
+   <canvas id="square" style="align-content: center; margin: 0 auto;  ">
+
+   </canvas>
+  
+
+   <script> 
+    const canvas = document.getElementById("square");
+    const canvasLength = Math.min(window.innerWidth, window.innerHeight) - 200
+    console.log(canvasLength)
+    canvas.setAttribute("height" , canvasLength)
+    canvas.setAttribute("width" , canvasLength)
+    const ctx = canvas.getContext("2d");
+
+
+    function drawTriangle(points) {
+      const length = points.length   
+
+      ctx.beginPath();
+
+      for(let i = 0; i< points.length; i++)
+       {
+        ctx.moveTo(...points[i]) 
+        ctx.lineTo(...points[(i +1) % points.length]) 
+       }  
+      ctx.stroke  ();
+    }
+
+
+    function drawPoint(x,y) {
+        ctx.beginPath();
+        ctx.arc(x, y, 1 , 0, Math.PI*2, true);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+    const P1 = [0, canvasLength]
+    const P2 = [canvasLength, canvasLength]
+    const P3 = [canvasLength/2 , canvasLength-Math.tan(Math.PI/3) * canvasLength/2]
+
+    let hash=[P1,P2,P3]
+   
+   drawTriangle([
+      P1, P2, P3 
+   ])
+
+
+
+var w;
+
+function startWorker(points) {
+  if (typeof(Worker) !== "undefined") {
+    if (typeof(w) == "undefined") {
+      w = new Worker("demo_workers4.js");
+    }
+
+    w.postMessage(points)
+    w.onmessage = function(event) {
+       drawPoint(...event.data)
+    };
+  } 
+}
+
+
+function stopWorker() {
+  w.terminate();
+  w = undefined;
+}
+
+
+startWorker(hash)
+
+
+   
+ 
+  
+   
+   </script>
+</body>
+</html>
