@@ -21,12 +21,13 @@
 
 
 <body>
+  
    <canvas id="square" style="align-content: center; margin: 0 auto;  ">
    </canvas>
    <button onclick="start()" > Start</button>
    <button onclick="stop()" > Stop</button>
    <button onclick="pause()" > Pause</button>
-   <button onclick="unpause()" > Pause</button>
+   <button onclick="unpause()" > Continue</button>
 
    <script src="./canvas_helpers.js" ></script>
    <script src="./helpers.js" ></script>
@@ -35,7 +36,7 @@
     const canvasLength = Math.min(window.innerWidth, window.innerHeight) - 200
     canvas.setAttribute("height" , canvasLength)
     canvas.setAttribute("width" , canvasLength)
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d")
 
     const P1 = [0, canvasLength]
     const P2 = [canvasLength, canvasLength]
