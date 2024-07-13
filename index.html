@@ -21,13 +21,10 @@
 
 
 <body>
-  
-
    <canvas id="square" style="align-content: center; margin: 0 auto;  ">
-
    </canvas>
-  
-
+   <script src="./canvas_helpers.js" ></script>
+   <script src="./helpers.js" ></script>
    <script> 
     const canvas = document.getElementById("square");
     const canvasLength = Math.min(window.innerWidth, window.innerHeight) - 200
@@ -36,69 +33,24 @@
     canvas.setAttribute("width" , canvasLength)
     const ctx = canvas.getContext("2d");
 
-
-    function drawTriangle(points) {
-      const length = points.length   
-
-      ctx.beginPath();
-
-      for(let i = 0; i< points.length; i++)
-       {
-        ctx.moveTo(...points[i]) 
-        ctx.lineTo(...points[(i +1) % points.length]) 
-       }  
-      ctx.stroke  ();
-    }
-
-
-    function drawPoint(x,y) {
-        ctx.beginPath();
-        ctx.arc(x, y, 1 , 0, Math.PI*2, true);
-        ctx.closePath();
-        ctx.fill();
-    }
-
     const P1 = [0, canvasLength]
     const P2 = [canvasLength, canvasLength]
     const P3 = [canvasLength/2 , canvasLength-Math.tan(Math.PI/3) * canvasLength/2]
 
-    let hash=[P1,P2,P3]
-   
+
    drawTriangle([
       P1, P2, P3 
-   ])
+   ], ctx);
 
 
-
-var w;
-
-function startWorker(points) {
-  if (typeof(Worker) !== "undefined") {
-    if (typeof(w) == "undefined") {
-      w = new Worker("demo_workers4.js");
-    }
-
-    w.postMessage(points)
-    w.onmessage = function(event) {
-       drawPoint(...event.data)
-    };
-  } 
-}
+  (async()=> {
+   for await (const point of getNextPoint([P1,P2,P3])) {
+      drawPoint(...point, ctx)
+   }
+  })();
 
 
-function stopWorker() {
-  w.terminate();
-  w = undefined;
-}
-
-
-startWorker(hash)
-
-
-   
+ </script>
  
-  
-   
-   </script>
 </body>
 </html>
