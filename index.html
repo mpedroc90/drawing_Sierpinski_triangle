@@ -23,12 +23,16 @@
 <body>
    <canvas id="square" style="align-content: center; margin: 0 auto;  ">
    </canvas>
+   <button onclick="start()" > Start</button>
+   <button onclick="stop()" > Stop</button>
+   <button onclick="pause()" > Pause</button>
+   <button onclick="unpause()" > Pause</button>
+
    <script src="./canvas_helpers.js" ></script>
    <script src="./helpers.js" ></script>
    <script> 
     const canvas = document.getElementById("square");
     const canvasLength = Math.min(window.innerWidth, window.innerHeight) - 200
-    console.log(canvasLength)
     canvas.setAttribute("height" , canvasLength)
     canvas.setAttribute("width" , canvasLength)
     const ctx = canvas.getContext("2d");
@@ -36,18 +40,38 @@
     const P1 = [0, canvasLength]
     const P2 = [canvasLength, canvasLength]
     const P3 = [canvasLength/2 , canvasLength-Math.tan(Math.PI/3) * canvasLength/2]
-
-
-   drawTriangle([
+    drawTriangle([
       P1, P2, P3 
-   ], ctx);
+    ], ctx);
 
 
-  (async()=> {
-   for await (const point of getNextPoint([P1,P2,P3])) {
-      drawPoint(...point, ctx)
-   }
-  })();
+
+  let stopSignal = false
+  let pauseSignal = false
+
+  async function start() {
+     for await (const point of getNextPoint(
+      [P1,P2,P3], 
+      () => stopSignal,
+      () => pauseSignal
+    )) {
+           drawPoint(...point, ctx)
+     }
+  }
+
+
+  function stop() {
+    stopSignal = true
+  }
+
+
+   function pause() {
+    pauseSignal = true
+  }
+  
+  function unpause() {
+    pauseSignal = false
+  }
 
 
  </script>
